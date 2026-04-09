@@ -186,13 +186,17 @@ class Sidebar extends ConsumerWidget {
                   isSelected: location.startsWith('/notifications'),
                   onTap: () => context.go('/notifications'),
                 ),
-                const _SidebarItem(
+                _SidebarItem(
                   icon: LucideIcons.video,
                   label: 'Telemedicine',
+                  isSelected: location.startsWith('/telemedicine'),
+                  onTap: () => context.go('/telemedicine'),
                 ),
-                const _SidebarItem(
+                _SidebarItem(
                   icon: LucideIcons.stethoscope,
                   label: 'Staff Management',
+                  isSelected: location.startsWith('/staff'),
+                  onTap: () => context.go('/staff'),
                 ),
                 const Divider(color: Colors.white12, height: 40),
                 const _SidebarItem(
@@ -447,6 +451,10 @@ class Header extends ConsumerWidget {
         return 'EMR / Patient Records';
       case '/notifications':
         return 'Notifications';
+      case '/telemedicine':
+        return 'Telemedicine Hub';
+      case '/staff':
+        return 'Staff Management';
       default:
         return 'MedFlow';
     }
