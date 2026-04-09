@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feat/gh-pages-deployment*
   workflow_dispatch:
 
 permissions:
@@ -46,7 +45,6 @@ jobs:
             echo "Error: index.html not found!"
             exit 1
           fi
-          ls -R build/web
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -54,6 +52,7 @@ jobs:
           path: build/web
 
   deploy:
+    if: github.ref == 'refs/heads/main'
     needs: build
     environment:
       name: github-pages
