@@ -5,11 +5,16 @@ on:
     branches:
       - main
       - feat/gh-pages-deployment*
+  workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -17,6 +22,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -31,6 +39,14 @@ jobs:
 
       - name: Create 404.html for routing
         run: cp build/web/index.html build/web/404.html
+
+      - name: Verify build output
+        run: |
+          if [ ! -f "build/web/index.html" ]; then
+            echo "Error: index.html not found!"
+            exit 1
+          fi
+          ls -R build/web
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
