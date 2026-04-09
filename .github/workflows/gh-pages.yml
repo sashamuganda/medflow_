@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feat/gh-pages-deployment*
 
 permissions:
   contents: read
@@ -21,12 +22,13 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          flutter-version: '3.27.0'
 
       - name: Install dependencies
         run: flutter pub get
 
       - name: Build Web
-        run: flutter build web --release --base-href "/medflow_/" --dart-define=FLUTTER_WEB_RENDERER=canvaskit
+        run: flutter build web --release --base-href "/medflow_/" --web-renderer canvaskit
 
       - name: Create 404.html for routing
         run: cp build/web/index.html build/web/404.html
