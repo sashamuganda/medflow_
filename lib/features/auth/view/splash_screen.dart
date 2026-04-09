@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -17,11 +15,15 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(milliseconds: 1400), () {
-      if (mounted) {
-        context.go('/welcome');
-      }
-    });
+    _navigateToWelcome();
+  }
+
+  Future<void> _navigateToWelcome() async {
+    // Shorter delay for better perceived performance
+    await Future.delayed(const Duration(milliseconds: 1000));
+    if (mounted) {
+      context.go('/welcome');
+    }
   }
 
   @override

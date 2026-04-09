@@ -120,7 +120,7 @@ class AppointmentsHomeScreen extends StatelessWidget {
             statusColor: AppColors.primary,
           ),
         ],
-      ),
+      ).animate().fadeIn(duration: 300.ms),
     );
   }
 
@@ -232,6 +232,6 @@ class AppointmentsHomeScreen extends StatelessWidget {
           ],
         ),
       ),
-    ).animate().fadeIn(duration: 300.ms).slideX(begin: 0.02, end: 0);
+    );
   }
 }

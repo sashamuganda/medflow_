@@ -95,7 +95,7 @@ class AdminDashboard extends StatelessWidget {
                 ),
               ),
             ],
-          ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
+          ),
           const SizedBox(height: 32),
           // Analytics & Flags
           Row(
@@ -196,9 +196,9 @@ class AdminDashboard extends StatelessWidget {
                 ),
               ),
             ],
-          ).animate().fadeIn(duration: 600.ms, delay: 200.ms).slideY(begin: 0.1, end: 0),
+          ),
         ],
-      ),
+      ).animate().fadeIn(duration: 300.ms),
     );
   }
 }

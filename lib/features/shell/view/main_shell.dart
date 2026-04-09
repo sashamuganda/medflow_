@@ -19,7 +19,6 @@ class MainShell extends ConsumerWidget {
     final isDesktop = size.width > 1100;
     final isTablet = size.width > 700 && size.width <= 1100;
     final isMobile = size.width <= 700;
-    final location = GoRouterState.of(context).uri.toString();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -37,19 +36,19 @@ class MainShell extends ConsumerWidget {
           ),
         ],
       ),
-      bottomNavigationBar: isMobile ? _ShellBottomNav(location: location) : null,
+      bottomNavigationBar: isMobile ? const _ShellBottomNav() : null,
     );
   }
 }
 
 class _ShellBottomNav extends ConsumerWidget {
-  const _ShellBottomNav({required this.location});
-
-  final String location;
+  const _ShellBottomNav();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final role = ref.watch(currentRoleProvider);
+    final location = GoRouterState.of(context).uri.toString();
+
     return BottomNavigationBar(
       currentIndex: _getSelectedIndex(location),
       onTap: (index) => _onNavTap(context, role, index),

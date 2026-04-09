@@ -17,86 +17,93 @@ class QueueOverview extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final patients = ref.watch(queuePatientsProvider);
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(32),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.all(32),
+          sliver: SliverList(
+            delegate: SliverChildListDelegate([
+              Row(
                 children: [
-                  const Text(
-                    'Master Patient Queue',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: -1,
-                      color: AppColors.slate900,
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Master Patient Queue',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: -1,
+                          color: AppColors.slate900,
+                        ),
+                      ),
+                      Text(
+                        '${patients.length} active patients across 8 departments',
+                        style: const TextStyle(color: AppColors.textSecondary, fontSize: 15),
+                      ),
+                    ],
                   ),
-                  Text(
-                    '${patients.length} active patients across 8 departments',
-                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 15),
+                  const Spacer(),
+                  MedButton(
+                    label: 'New Patient / Walk-in',
+                    icon: LucideIcons.userPlus,
+                    onPressed: () => context.push('/triage'),
+                    width: 220,
+                  ),
+                  const SizedBox(width: 12),
+                  MedButton(
+                    label: 'Filter',
+                    icon: LucideIcons.filter,
+                    type: MedButtonType.secondary,
+                    onPressed: () {},
                   ),
                 ],
               ),
-              const Spacer(),
-              MedButton(
-                label: 'New Patient / Walk-in',
-                icon: LucideIcons.userPlus,
-                onPressed: () => context.push('/triage'),
-                width: 220,
+              const SizedBox(height: 32),
+              Row(
+                children: [
+                  _buildMiniStat('Emergency', '12', AppColors.critical),
+                  const SizedBox(width: 16),
+                  _buildMiniStat('General', '18', AppColors.primary),
+                  const SizedBox(width: 16),
+                  _buildMiniStat('Cardiology', '5', AppColors.moderate),
+                  const SizedBox(width: 16),
+                  _buildMiniStat('Pediatrics', '7', AppColors.routine),
+                ],
+              ).animate().fadeIn(duration: 400.ms),
+              const SizedBox(height: 32),
+              MedCard(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                color: AppColors.slate50,
+                borderSide: BorderSide.none,
+                child: Row(
+                  children: const [
+                    Expanded(flex: 3, child: Text('PATIENT', style: _headerStyle)),
+                    Expanded(flex: 2, child: Text('DEPARTMENT', style: _headerStyle)),
+                    Expanded(flex: 2, child: Text('WAITING', style: _headerStyle)),
+                    Expanded(flex: 2, child: Text('STATUS', style: _headerStyle)),
+                    Expanded(flex: 2, child: Text('TRIAGE', style: _headerStyle)),
+                    SizedBox(width: 100),
+                  ],
+                ),
               ),
-              const SizedBox(width: 12),
-              MedButton(
-                label: 'Filter',
-                icon: LucideIcons.filter,
-                type: MedButtonType.secondary,
-                onPressed: () {},
-              ),
-            ],
+              const SizedBox(height: 12),
+            ]),
           ),
-          const SizedBox(height: 32),
-          Row(
-            children: [
-              _buildMiniStat('Emergency', '12', AppColors.critical),
-              const SizedBox(width: 16),
-              _buildMiniStat('General', '18', AppColors.primary),
-              const SizedBox(width: 16),
-              _buildMiniStat('Cardiology', '5', AppColors.moderate),
-              const SizedBox(width: 16),
-              _buildMiniStat('Pediatrics', '7', AppColors.routine),
-            ],
-          ).animate().fadeIn(duration: 400.ms),
-          const SizedBox(height: 32),
-          MedCard(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            color: AppColors.slate50,
-            borderSide: BorderSide.none,
-            child: Row(
-              children: const [
-                Expanded(flex: 3, child: Text('PATIENT', style: _headerStyle)),
-                Expanded(flex: 2, child: Text('DEPARTMENT', style: _headerStyle)),
-                Expanded(flex: 2, child: Text('WAITING', style: _headerStyle)),
-                Expanded(flex: 2, child: Text('STATUS', style: _headerStyle)),
-                Expanded(flex: 2, child: Text('TRIAGE', style: _headerStyle)),
-                SizedBox(width: 100),
-              ],
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return _QueueRow(patient: patients[index], index: index);
+              },
+              childCount: patients.length,
             ),
           ),
-          const SizedBox(height: 12),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: patients.length,
-            itemBuilder: (context, index) {
-              return _QueueRow(patient: patients[index], index: index);
-            },
-          ),
-        ],
-      ),
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 32)),
+      ],
     );
   }
 
@@ -252,7 +259,7 @@ class _QueueRow extends StatelessWidget {
           ],
         ),
       ),
-    ).animate().fadeIn(duration: 300.ms, delay: (index * 50).ms).slideX(begin: 0.05, end: 0);
+    ).animate().fadeIn(duration: 300.ms, delay: (index * 20).ms).slideX(begin: 0.02, end: 0);
   }
 
   Widget _buildStatusChip(String status) {

@@ -100,9 +100,9 @@ class DoctorDashboard extends StatelessWidget {
                 ),
               ),
             ],
-          ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.05, end: 0),
+          ),
         ],
-      ),
+      ).animate().fadeIn(duration: 300.ms),
     );
   }
 
@@ -270,7 +270,7 @@ class DoctorDashboard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(color: AppColors.slate100, borderRadius: BorderRadius.circular(4)),
             child: Text(count, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-          ),
+            ),
         ],
       ),
     );
