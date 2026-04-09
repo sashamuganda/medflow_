@@ -19,6 +19,8 @@ import '../../features/queue/view/queue_overview.dart';
 import '../../features/queue/view/triage_input_screen.dart';
 import '../../features/queue/view/triage_result_screen.dart';
 import '../../features/shell/view/main_shell.dart';
+import '../../features/telemedicine/view/telemedicine_home_screen.dart';
+import '../../features/staff/view/staff_management_home_screen.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 final shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -98,6 +100,14 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/notifications',
           builder: (context, state) => const NotificationsCenterScreen(),
+        ),
+        GoRoute(
+          path: '/telemedicine',
+          builder: (context, state) => const TelemedicineHomeScreen(),
+        ),
+        GoRoute(
+          path: '/staff',
+          builder: (context, state) => const StaffManagementHomeScreen(),
         ),
       ],
     ),
