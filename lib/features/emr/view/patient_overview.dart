@@ -218,7 +218,7 @@ class _PatientOverviewState extends State<PatientOverview> with SingleTickerProv
         label: 'New Encounter',
         icon: LucideIcons.plus,
         onPressed: () {},
-        width: isVertical ? 200 : null,
+        width: isVertical ? 200 : 180,
       ),
       if (!isVertical) const SizedBox(width: 12),
       if (isVertical) const SizedBox(height: 12),
@@ -227,14 +227,14 @@ class _PatientOverviewState extends State<PatientOverview> with SingleTickerProv
         icon: LucideIcons.download,
         type: MedButtonType.secondary,
         onPressed: () {},
-        width: isVertical ? 200 : null,
+        width: isVertical ? 200 : 180,
       ),
     ];
 
     if (isVertical) {
       return Column(children: buttons);
     }
-    return Row(children: buttons.map((e) => e is MedButton ? Expanded(child: e) : e).toList());
+    return Wrap(spacing: 12, runSpacing: 12, children: buttons.whereType<Widget>().toList());
   }
 }
 
@@ -329,7 +329,7 @@ class _VisitCard extends StatelessWidget {
                 _buildInfoRow('Reason', reason),
                 _buildInfoRow('Diagnosis', diagnosis, color: AppColors.primary),
                 const SizedBox(height: 16),
-                MedButton(label: 'View Notes', type: MedButtonType.text, onPressed: () {}, width: double.infinity),
+              MedButton(label: 'View Notes', type: MedButtonType.text, onPressed: () {}, width: 160),
               ],
             );
           }
@@ -381,7 +381,7 @@ class _VisitCard extends StatelessWidget {
                   ],
                 ),
               ),
-              MedButton(label: 'View Notes', type: MedButtonType.text, onPressed: () {}),
+              MedButton(label: 'View Notes', type: MedButtonType.text, onPressed: () {}, width: 120),
             ],
           );
         },
@@ -449,7 +449,7 @@ class _MedicationsTab extends StatelessWidget {
               Text(instruction, style: const TextStyle(fontWeight: FontWeight.w500, color: AppColors.slate900)),
               Text(meta, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
               const SizedBox(height: 16),
-              MedButton(label: 'Renew', type: MedButtonType.secondary, height: 36, onPressed: () {}, width: double.infinity),
+              MedButton(label: 'Renew', type: MedButtonType.secondary, height: 36, onPressed: () {}, width: 140),
             ],
           );
         }
@@ -471,7 +471,7 @@ class _MedicationsTab extends StatelessWidget {
                 ],
               ),
             ),
-            MedButton(label: 'Renew', type: MedButtonType.secondary, height: 36, onPressed: () {}),
+            MedButton(label: 'Renew', type: MedButtonType.secondary, height: 36, onPressed: () {}, width: 120),
           ],
         );
       },
@@ -531,7 +531,7 @@ class _LabResultsTab extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                MedButton(label: 'View Full Report', type: MedButtonType.secondary, height: 40, onPressed: () {}, width: double.infinity),
+                MedButton(label: 'View Full Report', type: MedButtonType.secondary, height: 40, onPressed: () {}, width: 180),
               ],
             );
           }
@@ -564,7 +564,7 @@ class _LabResultsTab extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 24),
-              MedButton(label: 'View Full Report', type: MedButtonType.secondary, height: 40, onPressed: () {}),
+              MedButton(label: 'View Full Report', type: MedButtonType.secondary, height: 40, onPressed: () {}, width: 180),
             ],
           );
         },

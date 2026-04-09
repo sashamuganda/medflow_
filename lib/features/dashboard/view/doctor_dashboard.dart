@@ -10,12 +10,18 @@ class DoctorDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final useTwoColumns = width > 1320;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          Wrap(
+            spacing: 24,
+            runSpacing: 16,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,7 +41,6 @@ class DoctorDashboard extends StatelessWidget {
                   ),
                 ],
               ),
-              const Spacer(),
               MedButton(
                 label: 'Go Available',
                 icon: LucideIcons.video,
@@ -45,64 +50,75 @@ class DoctorDashboard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 40),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Main Column - Schedule
-              Expanded(
-                flex: 2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Today\'s Schedule',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 24),
-                    _buildAppointmentItem(
-                      time: '09:00 AM',
-                      patient: 'Sarah Jenkins',
-                      type: 'General Consultation',
-                      status: 'Completed',
-                      isPast: true,
-                    ),
-                    _buildAppointmentItem(
-                      time: '10:30 AM',
-                      patient: 'Michael Chen',
-                      type: 'Telemedicine Call',
-                      status: 'In Progress',
-                      isActive: true,
-                    ),
-                    _buildAppointmentItem(
-                      time: '11:15 AM',
-                      patient: 'Amanda Ross',
-                      type: 'Follow-up Visit',
-                      status: 'Checked In',
-                    ),
-                    _buildAppointmentItem(
-                      time: '12:00 PM',
-                      patient: 'Robert Wilson',
-                      type: 'Lab Review',
-                      status: 'Upcoming',
-                    ),
-                  ],
+          if (useTwoColumns)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(flex: 2, child: _buildScheduleColumn()),
+                const SizedBox(width: 32),
+                Expanded(
+                  child: Column(
+                    children: [
+                      _buildMyQueueCard(),
+                      const SizedBox(height: 24),
+                      _buildPendingTasksCard(),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 32),
-              // Side Column - Queue & Tasks
-              Expanded(
-                child: Column(
-                  children: [
-                    _buildMyQueueCard(),
-                    const SizedBox(height: 24),
-                    _buildPendingTasksCard(),
-                  ],
-                ),
-              ),
-            ],
-          ),
+              ],
+            )
+          else
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildScheduleColumn(),
+                const SizedBox(height: 24),
+                _buildMyQueueCard(),
+                const SizedBox(height: 24),
+                _buildPendingTasksCard(),
+              ],
+            ),
         ],
       ).animate().fadeIn(duration: 300.ms),
+    );
+  }
+
+  Widget _buildScheduleColumn() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Today\'s Schedule',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 24),
+        _buildAppointmentItem(
+          time: '09:00 AM',
+          patient: 'Sarah Jenkins',
+          type: 'General Consultation',
+          status: 'Completed',
+          isPast: true,
+        ),
+        _buildAppointmentItem(
+          time: '10:30 AM',
+          patient: 'Michael Chen',
+          type: 'Telemedicine Call',
+          status: 'In Progress',
+          isActive: true,
+        ),
+        _buildAppointmentItem(
+          time: '11:15 AM',
+          patient: 'Amanda Ross',
+          type: 'Follow-up Visit',
+          status: 'Checked In',
+        ),
+        _buildAppointmentItem(
+          time: '12:00 PM',
+          patient: 'Robert Wilson',
+          type: 'Lab Review',
+          status: 'Upcoming',
+        ),
+      ],
     );
   }
 
@@ -119,28 +135,22 @@ class DoctorDashboard extends StatelessWidget {
       child: MedCard(
         color: isActive ? AppColors.primary.withOpacity(0.02) : null,
         borderSide: isActive ? const BorderSide(color: AppColors.primary, width: 1.5) : null,
-        child: Row(
-          children: [
-            Container(
-              width: 80,
-              child: Text(
-                time,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: isPast ? AppColors.textSecondary : AppColors.slate900,
-                ),
-              ),
-            ),
-            Container(
-              width: 1,
-              height: 40,
-              color: AppColors.slate200,
-            ),
-            const SizedBox(width: 24),
-            Expanded(
-              child: Column(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final compact = constraints.maxWidth < 780;
+
+            if (compact) {
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    time,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isPast ? AppColors.textSecondary : AppColors.slate900,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   Text(
                     patient,
                     style: TextStyle(
@@ -150,18 +160,73 @@ class DoctorDashboard extends StatelessWidget {
                     ),
                   ),
                   Text(type, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      _buildStatusBadge(status),
+                      MedButton(
+                        label: isActive ? 'Resume' : (isPast ? 'View' : 'Start'),
+                        type: isActive ? MedButtonType.primary : MedButtonType.secondary,
+                        height: 36,
+                        width: 120,
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
                 ],
-              ),
-            ),
-            _buildStatusBadge(status),
-            const SizedBox(width: 24),
-            MedButton(
-              label: isActive ? 'Resume' : (isPast ? 'View' : 'Start'),
-              type: isActive ? MedButtonType.primary : MedButtonType.secondary,
-              height: 36,
-              onPressed: () {},
-            ),
-          ],
+              );
+            }
+
+            return Row(
+              children: [
+                SizedBox(
+                  width: 80,
+                  child: Text(
+                    time,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isPast ? AppColors.textSecondary : AppColors.slate900,
+                    ),
+                  ),
+                ),
+                Container(
+                  width: 1,
+                  height: 40,
+                  color: AppColors.slate200,
+                ),
+                const SizedBox(width: 24),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        patient,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: isPast ? AppColors.textSecondary : AppColors.slate900,
+                        ),
+                      ),
+                      Text(type, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Flexible(child: _buildStatusBadge(status)),
+                const SizedBox(width: 16),
+                MedButton(
+                  label: isActive ? 'Resume' : (isPast ? 'View' : 'Start'),
+                  type: isActive ? MedButtonType.primary : MedButtonType.secondary,
+                  height: 36,
+                  width: 110,
+                  onPressed: () {},
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -191,6 +256,8 @@ class DoctorDashboard extends StatelessWidget {
       ),
       child: Text(
         status,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.bold),
       ),
     );
