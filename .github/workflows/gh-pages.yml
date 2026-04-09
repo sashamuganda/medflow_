@@ -4,11 +4,16 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -16,6 +21,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -26,10 +34,17 @@ jobs:
         run: flutter pub get
 
       - name: Build Web
-        run: flutter build web --release --base-href "/medflow_/" --web-renderer canvaskit
+        run: flutter build web --release --base-href "/medflow_/"
 
       - name: Create 404.html for routing
         run: cp build/web/index.html build/web/404.html
+
+      - name: Verify build output
+        run: |
+          if [ ! -f "build/web/index.html" ]; then
+            echo "Error: index.html not found!"
+            exit 1
+          fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -37,6 +52,7 @@ jobs:
           path: build/web
 
   deploy:
+    if: github.ref == 'refs/heads/main'
     needs: build
     environment:
       name: github-pages
